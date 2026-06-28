@@ -109,19 +109,3 @@ sns.pairplot(tmp_1)
 ###vamos a ver la matriz de dispercion por clase y el boxplot por clase
 ##es decir cuando veamos el grafico de dispercion ver cuales pertenecen a una u otra clase
 sns.pairplot(tmp_1, hue = 'Outcome', diag_kind = 'hist')
-
-
-
-
-
-tmp_1
-
-tmp_1.head()
-
-tmp_1.describe()
-
-tmp_1.shape
-
-tmp_1.columns
-
-os.listdir()
