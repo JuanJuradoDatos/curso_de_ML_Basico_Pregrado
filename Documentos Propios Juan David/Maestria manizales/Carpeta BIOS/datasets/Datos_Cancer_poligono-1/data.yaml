@@ -1,0 +1,14 @@
+names:
+- Benigno
+- Maligno
+- Normal
+nc: 3
+roboflow:
+  license: CC BY 4.0
+  project: datos_cancer_poligono-apnys
+  url: https://universe.roboflow.com/datoscancer/datos_cancer_poligono-apnys/dataset/1
+  version: 1
+  workspace: datoscancer
+test: C:/Users/Lunafernandavid/Documents/Documentos Propios Juan David/Maestria manizales/Carpeta BIOS/datasets/Datos_Cancer_poligono-1/test/images
+train: C:/Users/Lunafernandavid/Documents/Documentos Propios Juan David/Maestria manizales/Carpeta BIOS/datasets/Datos_Cancer_poligono-1/train/images
+val: C:/Users/Lunafernandavid/Documents/Documentos Propios Juan David/Maestria manizales/Carpeta BIOS/datasets/Datos_Cancer_poligono-1/valid/images
