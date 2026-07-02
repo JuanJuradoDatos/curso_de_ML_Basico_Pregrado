@@ -5,6 +5,8 @@
 
 import pandas as pd
 import os
+
+from markdown_it.rules_core import inline
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LogisticRegression
@@ -272,5 +274,102 @@ to_drop
 tmp_1.drop(tmp_1[to_drop],axis = 1, inplace = True)
 tmp_1.columns
 
-##ahora veamos la eliminacion por backward
+###Analsar la eliminacion recursiva en python
+
+##analizar bien
+#sklearn.feature_selection import RFE
+
+###vamos a ver extraccion de caracteristicas con decicion tree
+##Feature importants
+import pandas as pd
+from sklearn.datasets import load_breast_cancer
+wisconsin = load_breast_cancer()
+df_wisconsin = pd.DataFrame(wisconsin.data, columns=wisconsin.feature_names)
+X_wisconsin = wisconsin.data
+Y_wisconsin = wisconsin.target
+
+df_wisconsin.shape
+
+
+#librerias que vamos a usar
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+from sklearn.model_selection import train_test_split
+
+##vamos a sacar features important por arboles de decision
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import accuracy_score
+
+##GENERAR PARTICON
+test_size = 0.2
+seed = 7
+X_train, X_test, Y_train, Y_test = train_test_split(X_wisconsin, Y_wisconsin, test_size=test_size, random_state=seed)
+
+##vamos a hacer que el modelo aprenda
+depth = 3
+tree = DecisionTreeRegressor(criterion='squared_error',max_depth = depth)
+tree.fit(X_train, Y_train)
+
+##extraer los indices de las variables utilizadas
+subset = np.unique(tree.tree_.feature[tree.tree_.feature >=0])
+print(f'Variables Originales: {X_wisconsin.shape[1]}')
+print(f'Varibles usadas: {subset}')
+print(f'Training Accuracy: {tree.score(X_train, Y_train)*100:.2f}%')
+print(f'Test Accuracy: {tree.score(X_test, Y_test)*100:.2f}%')
+print(df_wisconsin.columns[[ 0,1,22,23,26,27]])
+
+###ahora extraccion de caracteristicas con Extratrees
+
+from sklearn.ensemble import ExtraTreesClassifier
+model= ExtraTreesClassifier()
+model.fit(X_train, Y_train)
+print(list(df_wisconsin.columns))
+print(model.feature_importances_)
+
+###ahora veamos como seria con Randonforest
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+test_size = 0.2
+seed = 7
+X_train, X_test, Y_train, Y_test = train_test_split(X_wisconsin, Y_wisconsin, test_size=test_size, random_state=seed)
+
+forest = RandomForestClassifier(n_estimators=100, random_state=seed)
+forest.fit(X_train, Y_train)
+
+##variables importantes
+importances = forest.feature_importances_
+Y_pred = forest.predict(X_test)
+print(f'Error con todas las variables: {accuracy_score(Y_test, Y_pred)*100:.2f}%')
+
+ranking = np.argsort(forest.feature_importances_)
+print(wisconsin.feature_names[ranking])
+
+plt.figure(figsize = (10,10))
+plt.title('Feature Importances')
+plt.barh(range(X_wisconsin.shape[1]), importances[ranking])
+plt.yticks(range(X_wisconsin.shape[1]), wisconsin.feature_names[ranking], fontsize=8)
+
+forest.fit(X_train[:, ranking[-5:]], Y_train)
+Y_pred = forest.predict(X_test[:, ranking[-5:]])
+print(f'Error con todas las variables: {accuracy_score(Y_test, Y_pred)*100:.2f}%')
+
+##ahora veamos la regularizacion Lasso
+
+from sklearn.linear_model import LassoCV
+
+reg = LassoCV()
+reg.fit(X_train, Y_train)
+
+print(f'Best alpha using bulding Lasso CV: {reg.alphas}')
+print(f'Best score using built in LassoCV: {reg.score(X_train, Y_train)*100:.2f}%')
+coef = pd.Series(reg.coef_)
+print(coef)
+
+###reduccion de dimensionalidad PCA
+##Estudiar esta parte de PCA para poder entender bien
 
